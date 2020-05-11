@@ -11,9 +11,11 @@ class CategoriaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view("admin.categoria.listar");
+        $busq = $request->buscar;
+
+        return view("admin.categoria.listar", compact('busq'));
     }
 
     /**

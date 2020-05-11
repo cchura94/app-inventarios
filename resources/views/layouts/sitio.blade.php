@@ -48,5 +48,9 @@
 
 @yield('contenedor')
 
+<footer>
+  <h2>&copy; Desarrollado por cpc</h2>
+</footer>
+
 </body>
 </html>
