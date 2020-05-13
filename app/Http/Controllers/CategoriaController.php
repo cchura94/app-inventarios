@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Categoria;
 
 class CategoriaController extends Controller
 {
@@ -14,8 +16,15 @@ class CategoriaController extends Controller
     public function index(Request $request)
     {
         $busq = $request->buscar;
+        //$categorias = DB::select("select * from categorias");
+        //DB::insert("insert into categorias (nombre, descripcion) values ('muebles', 'muebles de oficina')");
+        //$categorias2 = DB::table("categorias")->select("nombre", "descripcion")->get();
+        //DB::table("categorias")->where('id', 2)->update(["nombre"=> "muebles modificado"]);
+        //return DB::table("categorias")->get();
+        //Categoria::All();
+        $categorias =  Categoria::All();
 
-        return view("admin.categoria.listar", compact('busq'));
+         return view("admin.categoria.listar", compact('busq', 'categorias'));
     }
 
     /**
