@@ -22,7 +22,9 @@ class CategoriaController extends Controller
         //DB::table("categorias")->where('id', 2)->update(["nombre"=> "muebles modificado"]);
         //return DB::table("categorias")->get();
         //Categoria::All();
-        $categorias =  Categoria::All();
+
+        //$categorias =  Categoria::All();
+        $categorias =  Categoria::paginate(5);
 
          return view("admin.categoria.listar", compact('busq', 'categorias'));
     }
@@ -45,7 +47,12 @@ class CategoriaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $cat = new Categoria;
+        $cat->nombre = $request->nombre;
+        $cat->descripcion = $request->descripcion;
+        $cat->save();
+
+        return redirect("/categoria")->with("ok", "La categoria se ha registrado");
     }
 
     /**
@@ -67,7 +74,8 @@ class CategoriaController extends Controller
      */
     public function edit($id)
     {
-        return view("admin.categoria.editar");
+        $categoria = Categoria::find($id);
+        return view("admin.categoria.editar", compact('categoria'));
     }
 
     /**
@@ -79,7 +87,13 @@ class CategoriaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $categoria = Categoria::find($id);
+        $categoria->nombre = $request->nombre;
+        $categoria->descripcion = $request->descripcion;
+        $categoria->save();
+
+        return redirect("/categoria")->with("ok", "La categoria se ha modificado");
+   
     }
 
     /**
@@ -90,6 +104,8 @@ class CategoriaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $categoria = Categoria::find($id);
+        $categoria->delete();
+        return redirect("/categoria")->with("ok", "La categoria se ha eliminado");
     }
 }
