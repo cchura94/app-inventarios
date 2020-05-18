@@ -22,6 +22,7 @@ class CategoriaController extends Controller
         //DB::table("categorias")->where('id', 2)->update(["nombre"=> "muebles modificado"]);
         //return DB::table("categorias")->get();
         //Categoria::All();
+        
 
         //$categorias =  Categoria::All();
         $categorias =  Categoria::paginate(5);
@@ -47,6 +48,10 @@ class CategoriaController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            "nombre" => "required|unique:categorias|max:30|min:2"            
+        ]);
+
         $cat = new Categoria;
         $cat->nombre = $request->nombre;
         $cat->descripcion = $request->descripcion;
@@ -107,5 +112,12 @@ class CategoriaController extends Controller
         $categoria = Categoria::find($id);
         $categoria->delete();
         return redirect("/categoria")->with("ok", "La categoria se ha eliminado");
+    }
+
+    public function buscar(Request $request)
+    {
+        $busq =  $request->buscar;
+        $categorias = Categoria::where('nombre', "like", "%".$busq."%")->orwhere('descripcion', "like", "%".$busq."%")->paginate();
+        return view("admin.categoria.listar", compact('busq', 'categorias'));
     }
 }
