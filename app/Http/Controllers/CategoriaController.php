@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Categoria;
+use Auth;
+use Dompdf\Dompdf;
 
 class CategoriaController extends Controller
 {
@@ -15,6 +17,8 @@ class CategoriaController extends Controller
      */
     public function index(Request $request)
     {
+        Auth::user()->autorizar(['user', 'admin']);
+
         $busq = $request->buscar;
         //$categorias = DB::select("select * from categorias");
         //DB::insert("insert into categorias (nombre, descripcion) values ('muebles', 'muebles de oficina')");
@@ -37,6 +41,7 @@ class CategoriaController extends Controller
      */
     public function create()
     {
+        Auth::user()->autorizar(['admin']);
         return view("admin.categoria.nuevo");
     }
 
@@ -48,6 +53,7 @@ class CategoriaController extends Controller
      */
     public function store(Request $request)
     {
+        Auth::user()->autorizar(['admin']);
         $request->validate([
             "nombre" => "required|unique:categorias|max:30|min:2"            
         ]);
@@ -68,6 +74,7 @@ class CategoriaController extends Controller
      */
     public function show($id)
     {
+        Auth::user()->autorizar(['user']);
         return view("admin.categoria.mostrar");
     }
 
@@ -79,6 +86,7 @@ class CategoriaController extends Controller
      */
     public function edit($id)
     {
+        Auth::user()->autorizar(['admin']);
         $categoria = Categoria::find($id);
         return view("admin.categoria.editar", compact('categoria'));
     }
@@ -92,6 +100,7 @@ class CategoriaController extends Controller
      */
     public function update(Request $request, $id)
     {
+        Auth::user()->autorizar(['admin']);
         $categoria = Categoria::find($id);
         $categoria->nombre = $request->nombre;
         $categoria->descripcion = $request->descripcion;
@@ -109,6 +118,7 @@ class CategoriaController extends Controller
      */
     public function destroy($id)
     {
+        Auth::user()->autorizar(['admin']);
         $categoria = Categoria::find($id);
         $categoria->delete();
         return redirect("/categoria")->with("ok", "La categoria se ha eliminado");
@@ -116,8 +126,25 @@ class CategoriaController extends Controller
 
     public function buscar(Request $request)
     {
+        Auth::user()->autorizar(['user', 'admin']);
         $busq =  $request->buscar;
         $categorias = Categoria::where('nombre', "like", "%".$busq."%")->orwhere('descripcion', "like", "%".$busq."%")->paginate();
         return view("admin.categoria.listar", compact('busq', 'categorias'));
+    }
+
+    public function generarpdf()
+    {
+        $categorias = Categoria::All();
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml('Hola Mundo');
+
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4', 'landscape');
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser
+        $dompdf->stream();
     }
 }

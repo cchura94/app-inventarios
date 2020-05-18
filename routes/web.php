@@ -43,6 +43,8 @@ Route::get("/nosotros", function(){
 });
 
 Route::get('/categoria/buscar', 'CategoriaController@buscar');
+Route::get('/categoria/reporte', 'CategoriaController@generarpdf');
+
 
 Route::get("/persona", "PersonaController@listar")->name("persona_listar");
 Route::get("/persona/crear", "PersonaController@crear")->name("persona_crear");
@@ -54,6 +56,8 @@ Route::resource("/categoria", "CategoriaController")->middleware("auth");
 Route::resource("/proveedor", "ProveedorController")->middleware("auth");
 Route::resource("/producto", "ProductoController")->middleware("auth");
 Route::resource("/usuario", "UsuarioController")->middleware("auth");
+Route::resource("/rol", "RoleController");
+
 
 Auth::routes(['register' => false]);
 
